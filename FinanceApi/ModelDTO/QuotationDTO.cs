@@ -50,8 +50,6 @@
         public decimal FxRate { get; set; } = 1m;
 
         public int PaymentTermsId { get; set; }
-
-        // ✅ ValidityDate -> DeliveryDate
         public DateTime? DeliveryDate { get; set; }
 
         public decimal Subtotal { get; set; }
@@ -63,8 +61,12 @@
         public string? Remarks { get; set; }
         public string? DeliveryTo { get; set; }
 
+        // ✅ NEW: multi item sets
+        public List<int> ItemSetIds { get; set; } = new();
+
         public List<QuotationLineDTO> Lines { get; set; } = new();
     }
+
 
     public class QuotationListDTO
     {
