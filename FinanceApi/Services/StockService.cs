@@ -107,6 +107,15 @@ namespace FinanceApi.Services
             return await _repository.GetMaterialTransferList();
         }
 
+        public async Task<IEnumerable<MaterialTransferListViewInfo>> gettransferdetailsbyid(int id)
+        {
+            return await _repository.gettransferdetailsbyid(id);
+        }
+
+        public async Task<int> ConfirmReceiveAsync(ConfirmReceiveRequestDto req)
+        {
+            return await _repository.ConfirmReceiveAsync(req);
+        }
 
     }
 }

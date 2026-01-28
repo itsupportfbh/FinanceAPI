@@ -35,5 +35,8 @@
 
         public int TransferQty {  get; set; }
 
+        public string Remarks { get; set; }
+        public string TransferNo { get; set; }
+
     }
 }

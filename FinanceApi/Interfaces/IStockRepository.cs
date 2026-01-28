@@ -32,6 +32,13 @@ namespace FinanceApi.Interfaces
 
 
         Task<IEnumerable<MaterialTransferListViewInfo>> GetMaterialTransferList();
+
+
+        Task<IEnumerable<MaterialTransferListViewInfo>> gettransferdetailsbyid(int toWarehouseId);
+
+        Task<int> ConfirmReceiveAsync(ConfirmReceiveRequestDto req);
+
+
     }
 }
 
