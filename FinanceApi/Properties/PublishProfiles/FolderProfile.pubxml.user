@@ -1,0 +1,20 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<!-- https://go.microsoft.com/fwlink/?LinkID=208121. -->
+<Project>
+  <PropertyGroup>
+    <_PublishTargetUrl>C:\publish</_PublishTargetUrl>
+    <History>True|2026-01-14T03:25:27.0304188Z||;False|2026-01-13T19:23:37.6775599-08:00||;False|2026-01-13T19:21:11.4299664-08:00||;True|2025-10-12T09:08:21.5896680-07:00||;True|2025-10-12T07:20:01.3628497-07:00||;True|2025-10-12T07:09:41.5569074-07:00||;True|2025-10-11T04:13:49.6975199-07:00||;False|2025-10-11T04:12:42.3696594-07:00||;True|2025-10-11T03:48:23.6898498-07:00||;True|2025-10-11T03:43:29.1312425-07:00||;False|2025-10-11T03:42:16.5671536-07:00||;True|2025-10-11T03:21:27.2594338-07:00||;True|2025-10-11T03:19:14.9558471-07:00||;True|2025-10-11T03:12:01.1950165-07:00||;False|2025-10-11T03:11:06.9959522-07:00||;True|2025-10-11T03:09:36.0263955-07:00||;True|2025-10-11T03:08:24.3718632-07:00||;True|2025-10-11T02:59:54.5628521-07:00||;True|2025-10-11T02:46:27.3990234-07:00||;False|2025-10-11T02:39:12.6411614-07:00||;False|2025-10-11T02:33:24.8550227-07:00||;True|2025-10-11T01:43:41.2182705-07:00||;True|2025-10-11T01:15:23.9711847-07:00||;</History>
+    <LastFailureDetails />
+    <TimeStampOfAssociatedLegacyPublishXmlFile />
+  </PropertyGroup>
+  <ItemGroup>
+    <DestinationConnectionStrings Include="DefaultConnection">
+      <Value>Server=154.61.75.4%3bDatabase=Unity_ERP%3bUser Id=fbherp%3bpassword=Kadavusol%4098Tuas%3b</Value>
+    </DestinationConnectionStrings>
+  </ItemGroup>
+  <ItemGroup>
+    <EFMigrations Include="FinanceApi.Data.ApplicationDbContext">
+      <Value>Server=154.61.75.4%3bDatabase=Unity_ERP%3bUser Id=fbherp%3bpassword=Kadavusol%4098Tuas%3b</Value>
+    </EFMigrations>
+  </ItemGroup>
+</Project>

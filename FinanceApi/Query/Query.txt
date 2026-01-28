@@ -1,0 +1,428 @@
+CREATE TABLE "Meetings" ( 
+    "Id" SERIAL PRIMARY KEY,
+    "MeetingName" VARCHAR(255),
+    "MeetingType" VARCHAR(100),
+    "StartDate" TIMESTAMP WITHOUT TIME ZONE,
+    "EndDate" TIMESTAMP WITHOUT TIME ZONE,
+    "Department" VARCHAR(100),
+    "Location" VARCHAR(255),
+    "OrganisedBy" VARCHAR(100),
+    "Reporter" VARCHAR(100),
+    "CreatedBy" VARCHAR(100),
+    "CreatedDate" TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    "UpdatedBy" VARCHAR(100),
+    "UpdatedDate" TIMESTAMP,
+    "IsActive" BOOLEAN DEFAULT TRUE
+);
+
+CREATE TABLE "Attendees" (
+    "Id" SERIAL PRIMARY KEY,
+    "MeetingId" INT,
+    "Attendee" VARCHAR(255),
+    "AttendeeType" VARCHAR(100),
+    "AttendeeStatus" VARCHAR(100),
+    "CreatedBy" VARCHAR(100),
+    "CreatedDate" TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    "UpdatedBy" VARCHAR(100),
+    "UpdatedDate" TIMESTAMP,
+    "IsActive" BOOLEAN DEFAULT TRUE,
+    FOREIGN KEY ("MeetingId") REFERENCES "Meetings"("Id")
+);
+
+CREATE TABLE "MeetingAgendaItems" (
+    "Id" SERIAL PRIMARY KEY,
+    "MeetingId" INT,
+    "Title" VARCHAR(255),
+    "Description" VARCHAR(100),
+    "ItemTypeName" VARCHAR(100),
+    "RequestedBy" VARCHAR(100),
+    "SequenceNo" VARCHAR(100),
+    "CreatedBy" VARCHAR(100),
+    "CreatedDate" TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    "UpdatedBy" VARCHAR(100),
+    "UpdatedDate" TIMESTAMP,
+    "IsActive" BOOLEAN DEFAULT TRUE,
+    FOREIGN KEY ("MeetingId") REFERENCES "Meetings"("Id")
+);
+
+CREATE TABLE "MeetingAgendaDecision" (
+    "Id" SERIAL PRIMARY KEY,
+    "MeetingId" INT,
+    "Description" VARCHAR(100),
+    "DueDate" TIMESTAMP WITHOUT TIME ZONE,
+    "AssignedTo" VARCHAR(100),
+    "DecisionNumber" VARCHAR(100),
+    "RelatedAgendaItemTitle" VARCHAR(100),
+    "ResolutionStatus" VARCHAR(100),
+    "CreatedBy" VARCHAR(100),
+    "CreatedDate" TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    "UpdatedBy" VARCHAR(100),
+    "UpdatedDate" TIMESTAMP,
+    "IsActive" BOOLEAN DEFAULT TRUE, 
+    FOREIGN KEY ("MeetingId") REFERENCES "Meetings"("Id")
+);
+
+CREATE TABLE "User" (
+    "Id" SERIAL PRIMARY KEY,
+    "Username" VARCHAR(100) NOT NULL,
+    "PasswordHash" VARCHAR(100) NOT NULL,
+    "Email" VARCHAR(100) NOT NULL,
+    "CreatedBy" VARCHAR(100),
+    "CreatedDate" TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    "UpdatedBy" VARCHAR(100),
+    "UpdatedDate" TIMESTAMP,
+    "IsActive" BOOLEAN DEFAULT TRUE
+);
+
+CREATE TABLE "PasswordResetToken" (
+    "Id" SERIAL PRIMARY KEY,
+    "UserId" INT NOT NULL,
+    "Token" VARCHAR(255) NOT NULL,
+    "Expiration" TIMESTAMP NOT NULL,
+    "IsUsed" BOOLEAN NOT NULL DEFAULT FALSE,
+
+    CONSTRAINT "FK_PasswordResetToken_User" FOREIGN KEY ("UserId")
+        REFERENCES "User"("Id")
+        ON DELETE CASCADE
+);
+
+CREATE TABLE "Country" (
+    "Id" SERIAL PRIMARY KEY,
+    "CountryName" VARCHAR(100) NOT NULL,
+    "CreatedBy" VARCHAR(100),
+    "CreatedDate" TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    "UpdatedBy" VARCHAR(100),
+    "UpdatedDate" TIMESTAMP,
+    "IsActive" BOOLEAN DEFAULT TRUE
+);
+
+CREATE TABLE "State" (
+    "Id" SERIAL PRIMARY KEY,
+    "StateName" VARCHAR(100) NOT NULL,
+    "CountryId" INT NOT NULL,
+    "CreatedBy" VARCHAR(100),
+    "CreatedDate" TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    "UpdatedBy" VARCHAR(100),
+    "UpdatedDate" TIMESTAMP,
+    "IsActive" BOOLEAN DEFAULT TRUE,
+    FOREIGN KEY ("CountryId") REFERENCES "Country"("Id")
+);
+
+CREATE TABLE "City" (
+    "Id" SERIAL PRIMARY KEY,
+    "CityName" VARCHAR(100) NOT NULL,
+    "StateId" INT NOT NULL,
+    "CountryId" INT NOT NULL,
+    "CreatedBy" VARCHAR(100),
+    "CreatedDate" TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    "UpdatedBy" VARCHAR(100),
+    "UpdatedDate" TIMESTAMP,
+    "IsActive" BOOLEAN DEFAULT TRUE,
+    FOREIGN KEY ("StateId") REFERENCES "State"("Id"),
+    FOREIGN KEY ("CountryId") REFERENCES "Country"("Id")
+);
+
+CREATE TABLE "CustomerGroups" (
+    "Id" SERIAL PRIMARY KEY,
+    "Name" VARCHAR(100) NOT null,
+    "Description" VARCHAR(100) NOT NULL,
+    "CreatedBy" VARCHAR(100),
+    "CreatedDate" TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    "UpdatedBy" VARCHAR(100),
+    "UpdatedDate" TIMESTAMP,
+    "IsActive" BOOLEAN DEFAULT TRUE
+);
+
+CREATE TABLE "SupplierGroups" (
+    "Id" SERIAL PRIMARY KEY,
+    "Name" VARCHAR(100) NOT null,
+    "Description" VARCHAR(100) NOT NULL,
+    "CreatedBy" VARCHAR(100),
+    "CreatedDate" TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    "UpdatedBy" VARCHAR(100),
+    "UpdatedDate" TIMESTAMP,
+    "IsActive" BOOLEAN DEFAULT TRUE
+);
+
+CREATE TABLE "Region" (
+    "Id" SERIAL PRIMARY KEY,
+    "RegionName" VARCHAR(100) NOT NULL,
+    "CreatedBy" VARCHAR(100),
+    "CreatedDate" TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    "UpdatedBy" VARCHAR(100),
+    "UpdatedDate" TIMESTAMP,
+    "IsActive" BOOLEAN DEFAULT TRUE
+);
+CREATE TABLE "Location" (
+    "Id" SERIAL PRIMARY KEY,
+    "Name" VARCHAR(100) NOT NULL,   
+    "CountryId" INT NOT NULL,
+    "StateId" INT NOT NULL,
+    "CityId" INT NOT NULL,
+    "Address" VARCHAR(255),    
+    "Latitude" VARCHAR(20),
+    "Longitude" VARCHAR(20),
+    "CreatedBy" VARCHAR(100),
+    "CreatedDate" TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    "UpdatedBy" VARCHAR(100),
+    "UpdatedDate" TIMESTAMP,
+    "IsActive" BOOLEAN DEFAULT TRUE,
+
+    FOREIGN KEY ("CountryId") REFERENCES "Country"("Id"),
+    FOREIGN KEY ("StateId") REFERENCES "State"("Id"),
+    FOREIGN KEY ("CityId") REFERENCES "City"("Id")
+);
+
+CREATE TABLE "Warehouse" (
+    "Id" SERIAL PRIMARY KEY,
+    "Name" VARCHAR(100) NOT NULL,   
+    "CountryId" INT NOT NULL,
+    "StateId" INT NOT NULL,
+    "CityId" INT NOT NULL,
+    "Address" VARCHAR(255),    
+    "Description" VARCHAR(250),
+    "Phone" VARCHAR(20),
+    "CreatedBy" VARCHAR(100),
+    "CreatedDate" TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    "UpdatedBy" VARCHAR(100),
+    "UpdatedDate" TIMESTAMP,
+    "IsActive" BOOLEAN DEFAULT TRUE,
+
+    FOREIGN KEY ("CountryId") REFERENCES "Country"("Id"),
+    FOREIGN KEY ("StateId") REFERENCES "State"("Id"),
+    FOREIGN KEY ("CityId") REFERENCES "City"("Id")
+);
+
+CREATE TABLE "Deduction" (
+    "Id" SERIAL PRIMARY KEY,
+    "Name" VARCHAR(100) NOT NULL,
+    "Description" VARCHAR(250),
+    "CreatedBy" VARCHAR(100),
+    "CreatedDate" TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    "UpdatedBy" VARCHAR(100),
+    "UpdatedDate" TIMESTAMP,
+    "IsActive" BOOLEAN DEFAULT TRUE
+);
+
+CREATE TABLE "Income" (
+    "Id" SERIAL PRIMARY KEY,
+    "Name" VARCHAR(100) NOT NULL,
+    "Description" VARCHAR(250),
+    "CreatedBy" VARCHAR(100),
+    "CreatedDate" TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    "UpdatedBy" VARCHAR(100),
+    "UpdatedDate" TIMESTAMP,
+    "IsActive" BOOLEAN DEFAULT TRUE
+);
+
+CREATE TABLE "Service" (
+    "Id" SERIAL PRIMARY KEY,
+    "Name" VARCHAR(100) NOT NULL,
+    "Charge" INT NOT null,    
+    "Tax" INT NOT null,
+    "Description" VARCHAR(100),
+    "CreatedBy" VARCHAR(100),
+    "CreatedDate" TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    "UpdatedBy" VARCHAR(100),
+    "UpdatedDate" TIMESTAMP,
+    "IsActive" BOOLEAN DEFAULT TRUE
+);
+
+CREATE TABLE "Customer" (
+    "Id" SERIAL PRIMARY KEY,
+    "Name" VARCHAR(100) NOT NULL,
+    "ContactName" VARCHAR(100),
+    "ContactTitle" VARCHAR(100),    
+    "CountryId" INT NOT NULL,
+    "StateId" INT NOT NULL,
+    "CityId" INT NOT NULL,
+    "CustomerGroupId" INT NOT NULL,
+    "RegionId" INT NOT NULL,
+    "Address" VARCHAR(255),    
+    "PostalCode" VARCHAR(20),
+    "Phone" VARCHAR(20),
+    "Website" VARCHAR(20),
+    "Fax" VARCHAR(20),
+    "Email" VARCHAR(20),
+    "CreatedBy" VARCHAR(100),
+    "CreatedDate" TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    "UpdatedBy" VARCHAR(100),
+    "UpdatedDate" TIMESTAMP,
+    "IsActive" BOOLEAN DEFAULT TRUE,
+
+    FOREIGN KEY ("CountryId") REFERENCES "Country"("Id"),
+    FOREIGN KEY ("StateId") REFERENCES "State"("Id"),
+    FOREIGN KEY ("CityId") REFERENCES "City"("Id"),
+    FOREIGN KEY ("CustomerGroupId") REFERENCES "CustomerGroups"("Id"),
+    FOREIGN KEY ("RegionId") REFERENCES "Region"("Id")
+);
+
+CREATE TABLE "Supplier" (
+    "Id" SERIAL PRIMARY KEY,
+    "Name" VARCHAR(100) NOT NULL,
+    "ContactName" VARCHAR(100),
+    "ContactTitle" VARCHAR(100),    
+    "CountryId" INT NOT NULL,
+    "StateId" INT NOT NULL,
+    "CityId" INT NOT NULL,
+    "SupplierGroupId" INT NOT NULL,
+    "RegionId" INT NOT NULL,
+    "Address" VARCHAR(255),    
+    "PostalCode" VARCHAR(20),
+    "Phone" VARCHAR(20),
+    "Website" VARCHAR(20),
+    "Fax" VARCHAR(20),
+    "Email" VARCHAR(20),
+    "CreatedBy" VARCHAR(100),
+    "CreatedDate" TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    "UpdatedBy" VARCHAR(100),
+    "UpdatedDate" TIMESTAMP,
+    "IsActive" BOOLEAN DEFAULT TRUE,
+
+    FOREIGN KEY ("CountryId") REFERENCES "Country"("Id"),
+    FOREIGN KEY ("StateId") REFERENCES "State"("Id"),
+    FOREIGN KEY ("CityId") REFERENCES "City"("Id"),
+    FOREIGN KEY ("SupplierGroupId") REFERENCES "SupplierGroups"("Id"),
+    FOREIGN KEY ("RegionId") REFERENCES "Region"("Id")
+);
+
+CREATE TABLE "Sales" (
+    "Id" SERIAL PRIMARY KEY,
+    "CustomerId" INT NOT NULL,
+    "Date" TIMESTAMP NOT NULL,
+    "PaymentAccount" VARCHAR(255),
+    "GrandTotal" DECIMAL(18,2),
+    "Discount" DECIMAL(18,2),
+    "TotalDiscount" DECIMAL(18,2),
+    "NoTax" DECIMAL(18,2),
+     "GstPercentage" INT NOT NULL,
+    "GST" DECIMAL(18,2),
+    "TotalTax" DECIMAL(18,2),
+    "ShippingCost" DECIMAL(18,2),
+    "NetTotal" DECIMAL(18,2),
+    "PaidAmount" DECIMAL(18,2),
+    "Due" DECIMAL(18,2),
+    "Change" DECIMAL(18,2),
+    "Details" TEXT,
+    "CreatedBy" VARCHAR(100),
+    "CreatedDate" TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    "UpdatedBy" VARCHAR(100),
+    "UpdatedDate" TIMESTAMP,
+    "IsActive" BOOLEAN DEFAULT TRUE,
+
+    FOREIGN KEY ("CustomerId") REFERENCES "Customer"("Id")
+);
+
+CREATE TABLE "SaleLineItems" (
+    "Id" SERIAL PRIMARY KEY,
+    "SalesId" INT NOT NULL,
+    "ProductName" VARCHAR(255),
+    "Description" VARCHAR(255),
+    "UnitName" VARCHAR(100),
+    "Quantity" INT,
+    "Rate" DECIMAL(18,2),
+    "Total" DECIMAL(18,2),
+    "Discount" DECIMAL(18,2),
+    "CreatedBy" VARCHAR(100),
+    "CreatedDate" TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    "UpdatedBy" VARCHAR(100),
+    "UpdatedDate" TIMESTAMP,
+    "IsActive" BOOLEAN DEFAULT TRUE,
+
+     FOREIGN KEY ("SalesId") REFERENCES "Sales"("Id")
+);
+
+
+CREATE TABLE "Purchases" (
+    "Id" SERIAL PRIMARY KEY,
+    "SupplierId" INT NOT NULL,
+    "Date" TIMESTAMP NOT NULL,
+    "PaymentAccount" VARCHAR(255),
+    "GrandTotal" DECIMAL(18,2),
+    "Discount" DECIMAL(18,2),
+    "TotalDiscount" DECIMAL(18,2),
+    "NoTax" DECIMAL(18,2),
+"GstPercentage" INT NOT NULL,
+    "GST" DECIMAL(18,2),
+    "TotalTax" DECIMAL(18,2),
+    "ShippingCost" DECIMAL(18,2),
+    "NetTotal" DECIMAL(18,2),
+    "PaidAmount" DECIMAL(18,2),
+    "Due" DECIMAL(18,2),
+    "Change" DECIMAL(18,2),
+    "Details" TEXT,
+    "CreatedBy" VARCHAR(100),
+    "CreatedDate" TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    "UpdatedBy" VARCHAR(100),
+    "UpdatedDate" TIMESTAMP,
+    "IsActive" BOOLEAN DEFAULT TRUE,
+
+    FOREIGN KEY ("SupplierId") REFERENCES "Supplier"("Id")
+);
+
+CREATE TABLE "PurchaseLineItems" (
+    "Id" SERIAL PRIMARY KEY,
+    "PurchasesId" INT NOT NULL,
+    "ProductName" VARCHAR(255),
+    "Description" VARCHAR(255),
+    "UnitName" VARCHAR(100),
+    "Quantity" INT,
+    "Rate" DECIMAL(18,2),
+    "Total" DECIMAL(18,2),
+    "Discount" DECIMAL(18,2),
+    "CreatedBy" VARCHAR(100),
+    "CreatedDate" TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    "UpdatedBy" VARCHAR(100),
+    "UpdatedDate" TIMESTAMP,
+    "IsActive" BOOLEAN DEFAULT TRUE,
+
+     FOREIGN KEY ("PurchasesId") REFERENCES "Purchases"("Id")
+);
+
+
+CREATE TABLE "ChartOfAccount" (
+    "Id" SERIAL PRIMARY KEY,
+    "HeadName" VARCHAR(255),
+    "HeadCode" INT,
+    "HeadLevel" INT,
+    "HeadType" VARCHAR(20),
+    "HeadCodeName" VARCHAR(50),
+    "IsGl" BOOLEAN DEFAULT false,
+    "IsTransaction" BOOLEAN DEFAULT false,
+    "ParentHead" INT,
+    "PHeadName" VARCHAR(255),
+    "Balance"  DECIMAL(18,2),
+    "OpeningBalance" DECIMAL(18,2),   
+    
+    "CreatedBy" VARCHAR(100),
+    "CreatedDate" TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    "UpdatedBy" VARCHAR(100),
+    "UpdatedDate" TIMESTAMP,
+    "IsActive" BOOLEAN DEFAULT true
+    
+  
+);
+
+
+CREATE TABLE "OpeningBalance" (
+    "Id" SERIAL PRIMARY KEY,
+    "Date" TIMESTAMP WITHOUT TIME ZONE NOT NULL,
+    "AccountHeadId" INT NOT NULL,
+    "BalanceType" INT NOT NULL,
+    "Amount" DECIMAL(18,2),
+    "Remark" VARCHAR(255),
+    "CreatedBy" VARCHAR(100),
+    "CreatedDate" TIMESTAMP WITHOUT TIME ZONE DEFAULT CURRENT_TIMESTAMP,
+    "UpdatedBy" VARCHAR(100),
+    "UpdatedDate" TIMESTAMP WITHOUT TIME ZONE,
+    "IsActive" BOOLEAN DEFAULT true,
+    
+    FOREIGN KEY ("AccountHeadId") REFERENCES "ChartOfAccount"("Id")
+);
+
+
+
+
+
+
+

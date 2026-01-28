@@ -1,0 +1,1336 @@
+CREATE TABLE Meetings (
+    Id INT IDENTITY(1,1) PRIMARY KEY,
+    MeetingName VARCHAR(255),
+    MeetingType VARCHAR(100),
+    StartDate DATETIME,
+    EndDate DATETIME,
+    Department VARCHAR(100),
+    Location VARCHAR(255),
+    OrganisedBy VARCHAR(100),
+    Reporter VARCHAR(100),
+    CreatedBy VARCHAR(100),
+    CreatedDate DATETIME DEFAULT GETDATE(),
+    UpdatedBy VARCHAR(100),
+    UpdatedDate DATETIME,
+    IsActive BIT DEFAULT 1
+);
+
+CREATE TABLE Attendees (
+    Id INT IDENTITY(1,1) PRIMARY KEY,
+    MeetingId INT,
+    Attendee VARCHAR(255),
+    AttendeeType VARCHAR(100),
+    AttendeeStatus VARCHAR(100),
+    CreatedBy VARCHAR(100),
+    CreatedDate DATETIME DEFAULT GETDATE(),
+    UpdatedBy VARCHAR(100),
+    UpdatedDate DATETIME,
+    IsActive BIT DEFAULT 1,
+    FOREIGN KEY (MeetingId) REFERENCES Meetings(Id)
+);
+
+CREATE TABLE MeetingAgendaItems (
+    Id INT IDENTITY(1,1) PRIMARY KEY,
+    MeetingId INT,
+    Title VARCHAR(255),
+    Description VARCHAR(100),
+    ItemTypeName VARCHAR(100),
+    RequestedBy VARCHAR(100),
+    SequenceNo VARCHAR(100),
+    CreatedBy VARCHAR(100),
+    CreatedDate DATETIME DEFAULT GETDATE(),
+    UpdatedBy VARCHAR(100),
+    UpdatedDate DATETIME,
+    IsActive BIT DEFAULT 1,
+    FOREIGN KEY (MeetingId) REFERENCES Meetings(Id)
+);
+
+CREATE TABLE MeetingAgendaDecision (
+    Id INT IDENTITY(1,1) PRIMARY KEY,
+    MeetingId INT,
+    Description VARCHAR(100),
+    DueDate DATETIME,
+    AssignedTo VARCHAR(100),
+    DecisionNumber VARCHAR(100),
+    RelatedAgendaItemTitle VARCHAR(100),
+    ResolutionStatus VARCHAR(100),
+    CreatedBy VARCHAR(100),
+    CreatedDate DATETIME DEFAULT GETDATE(),
+    UpdatedBy VARCHAR(100),
+    UpdatedDate DATETIME,
+    IsActive BIT DEFAULT 1,
+    FOREIGN KEY (MeetingId) REFERENCES Meetings(Id)
+);
+
+CREATE TABLE [User] (
+    Id INT IDENTITY(1,1) PRIMARY KEY,
+    Username VARCHAR(100) NOT NULL,
+    PasswordHash VARCHAR(100) NOT NULL,
+    Email VARCHAR(100) NOT NULL,
+    CreatedBy VARCHAR(100),
+    CreatedDate DATETIME DEFAULT GETDATE(),
+    UpdatedBy VARCHAR(100),
+    UpdatedDate DATETIME,
+    IsActive BIT DEFAULT 1
+);
+
+CREATE TABLE PasswordResetToken (
+    Id INT IDENTITY(1,1) PRIMARY KEY,
+    UserId INT NOT NULL,
+    Token VARCHAR(255) NOT NULL,
+    Expiration DATETIME NOT NULL,
+    IsUsed BIT NOT NULL DEFAULT 0,
+    CONSTRAINT FK_PasswordResetToken_User FOREIGN KEY (UserId) REFERENCES [User](Id) ON DELETE CASCADE
+);
+
+CREATE TABLE Country (
+    Id INT IDENTITY(1,1) PRIMARY KEY,
+    CountryName VARCHAR(100) NOT NULL,
+    GSTPercentage DECIMAL(10,6) DEFAULT 0,
+    CreatedBy VARCHAR(100),
+    CreatedDate DATETIME DEFAULT GETDATE(),
+    UpdatedBy VARCHAR(100),
+    UpdatedDate DATETIME,
+    IsActive BIT DEFAULT 1
+);
+
+CREATE TABLE State (
+    Id INT IDENTITY(1,1) PRIMARY KEY,
+    StateName VARCHAR(100) NOT NULL,
+    CountryId INT NOT NULL,
+    CreatedBy VARCHAR(100),
+    CreatedDate DATETIME DEFAULT GETDATE(),
+    UpdatedBy VARCHAR(100),
+    UpdatedDate DATETIME,
+    IsActive BIT DEFAULT 1,
+    FOREIGN KEY (CountryId) REFERENCES Country(Id)
+);
+
+CREATE TABLE City (
+    Id INT IDENTITY(1,1) PRIMARY KEY,
+    CityName VARCHAR(100) NOT NULL,
+    StateId INT NOT NULL,
+    CountryId INT NOT NULL,
+    CreatedBy VARCHAR(100),
+    CreatedDate DATETIME DEFAULT GETDATE(),
+    UpdatedBy VARCHAR(100),
+    UpdatedDate DATETIME,
+    IsActive BIT DEFAULT 1,
+    FOREIGN KEY (StateId) REFERENCES State(Id),
+    FOREIGN KEY (CountryId) REFERENCES Country(Id)
+);
+
+CREATE TABLE CustomerGroups (
+    Id INT IDENTITY(1,1) PRIMARY KEY,
+    Name VARCHAR(100) NOT NULL,
+    Description VARCHAR(100) NOT NULL,
+    CreatedBy VARCHAR(100),
+    CreatedDate DATETIME DEFAULT GETDATE(),
+    UpdatedBy VARCHAR(100),
+    UpdatedDate DATETIME,
+    IsActive BIT DEFAULT 1
+);
+
+CREATE TABLE SupplierGroups (
+    Id INT IDENTITY(1,1) PRIMARY KEY,
+    Name VARCHAR(100) NOT NULL,
+    Description VARCHAR(100) NOT NULL,
+    CreatedBy VARCHAR(100),
+    CreatedDate DATETIME DEFAULT GETDATE(),
+    UpdatedBy VARCHAR(100),
+    UpdatedDate DATETIME,
+    IsActive BIT DEFAULT 1
+);
+
+CREATE TABLE Region (
+    Id INT IDENTITY(1,1) PRIMARY KEY,
+    RegionName VARCHAR(100) NOT NULL,
+    CreatedBy VARCHAR(100),
+    CreatedDate DATETIME DEFAULT GETDATE(),
+    UpdatedBy VARCHAR(100),
+    UpdatedDate DATETIME,
+    IsActive BIT DEFAULT 1
+);
+
+CREATE TABLE Location (
+    Id INT IDENTITY(1,1) PRIMARY KEY,
+    Name VARCHAR(100) NOT NULL,
+    CountryId INT NOT NULL,
+    StateId INT NOT NULL,
+    CityId INT NOT NULL,
+    ContactNumber VARCHAR(30),
+    Address VARCHAR(255),
+    Latitude VARCHAR(20),
+    Longitude VARCHAR(20),
+    CreatedBy VARCHAR(100),
+    CreatedDate DATETIME DEFAULT GETDATE(),
+    UpdatedBy VARCHAR(100),
+    UpdatedDate DATETIME,
+    IsActive BIT DEFAULT 1,
+    FOREIGN KEY (CountryId) REFERENCES Country(Id),
+    FOREIGN KEY (StateId) REFERENCES State(Id),
+    FOREIGN KEY (CityId) REFERENCES City(Id)
+);
+
+CREATE TABLE Warehouse (
+    Id INT IDENTITY(1,1) PRIMARY KEY,
+    Name VARCHAR(100) NOT NULL,
+    CountryId INT NOT NULL,
+    StateId INT NOT NULL,
+    CityId INT NOT NULL,
+    Address VARCHAR(255),
+    Description VARCHAR(250),
+    Phone VARCHAR(20),
+    CreatedBy VARCHAR(100),
+    CreatedDate DATETIME DEFAULT GETDATE(),
+    UpdatedBy VARCHAR(100),
+    UpdatedDate DATETIME,
+    IsActive BIT DEFAULT 1,
+    FOREIGN KEY (CountryId) REFERENCES Country(Id),
+    FOREIGN KEY (StateId) REFERENCES State(Id),
+    FOREIGN KEY (CityId) REFERENCES City(Id)
+);
+
+CREATE TABLE Deduction (
+    Id INT IDENTITY(1,1) PRIMARY KEY,
+    Name VARCHAR(100) NOT NULL,
+    Description VARCHAR(250),
+    CreatedBy VARCHAR(100),
+    CreatedDate DATETIME DEFAULT GETDATE(),
+    UpdatedBy VARCHAR(100),
+    UpdatedDate DATETIME,
+    IsActive BIT DEFAULT 1
+);
+
+CREATE TABLE Income (
+    Id INT IDENTITY(1,1) PRIMARY KEY,
+    Name VARCHAR(100) NOT NULL,
+    Description VARCHAR(250),
+    CreatedBy VARCHAR(100),
+    CreatedDate DATETIME DEFAULT GETDATE(),
+    UpdatedBy VARCHAR(100),
+    UpdatedDate DATETIME,
+    IsActive BIT DEFAULT 1
+);
+
+CREATE TABLE Service (
+    Id INT IDENTITY(1,1) PRIMARY KEY,
+    Name VARCHAR(100) NOT NULL,
+    Charge INT NOT NULL,
+    Tax INT NOT NULL,
+    Description VARCHAR(100),
+    CreatedBy VARCHAR(100),
+    CreatedDate DATETIME DEFAULT GETDATE(),
+    UpdatedBy VARCHAR(100),
+    UpdatedDate DATETIME,
+    IsActive BIT DEFAULT 1
+);
+CREATE TABLE Department (
+    Id INT IDENTITY(1,1) PRIMARY KEY,
+    DepartmentName VARCHAR(100) NOT NULL,
+	DepartmentCode VARCHAR(100) NOT NULL,
+    CreatedBy VARCHAR(100),
+    CreatedDate DATETIME DEFAULT GETDATE(),
+    UpdatedBy VARCHAR(100),
+    UpdatedDate DATETIME,
+    IsActive BIT DEFAULT 1
+);
+CREATE TABLE Uom (
+    Id INT IDENTITY(1,1) PRIMARY KEY,
+    Name VARCHAR(100) NOT NULL,
+    Description VARCHAR(100) NOT NULL,
+    CreatedBy VARCHAR(100),
+    CreatedDate DATETIME DEFAULT GETDATE(),
+    UpdatedBy VARCHAR(100),
+    UpdatedDate DATETIME,
+    IsActive BIT DEFAULT 1
+);
+CREATE TABLE Item (
+    Id INT IDENTITY(1,1) PRIMARY KEY,
+    ItemCode VARCHAR(100) NOT NULL,
+	ItemName VARCHAR(100) NOT NULL,
+	UomId INT NOT NULL,
+	BudgetLineId INT NOT NULL,
+    CreatedBy VARCHAR(100),
+    CreatedDate DATETIME DEFAULT GETDATE(),
+    UpdatedBy VARCHAR(100),
+    UpdatedDate DATETIME,
+    IsActive BIT DEFAULT 1,
+
+	FOREIGN KEY (UomId) REFERENCES Uom(Id),
+	FOREIGN KEY (BudgetLineId) REFERENCES ChartOfAccount(Id),
+);
+CREATE TABLE Customer (
+    Id INT IDENTITY(1,1) PRIMARY KEY,
+    Name VARCHAR(100) NOT NULL,
+    ContactName VARCHAR(100),
+    ContactTitle VARCHAR(100),
+    CountryId INT NOT NULL,
+    StateId INT NOT NULL,
+    CityId INT NOT NULL,
+    CustomerGroupId INT NOT NULL,
+    RegionId INT NOT NULL,
+    Address VARCHAR(255),
+    PostalCode VARCHAR(20),
+    Phone VARCHAR(20),
+    Website VARCHAR(20),
+    Fax VARCHAR(20),
+    Email VARCHAR(20),
+    CreatedBy VARCHAR(100),
+    CreatedDate DATETIME DEFAULT GETDATE(),
+    UpdatedBy VARCHAR(100),
+    UpdatedDate DATETIME,
+    IsActive BIT DEFAULT 1,
+    FOREIGN KEY (CountryId) REFERENCES Country(Id),
+    FOREIGN KEY (StateId) REFERENCES State(Id),
+    FOREIGN KEY (CityId) REFERENCES City(Id),
+    FOREIGN KEY (CustomerGroupId) REFERENCES CustomerGroups(Id),
+    FOREIGN KEY (RegionId) REFERENCES Region(Id)
+);
+
+CREATE TABLE Supplier (
+    Id INT IDENTITY(1,1) PRIMARY KEY,
+    Name VARCHAR(100) NOT NULL,
+    ContactName VARCHAR(100),
+    ContactTitle VARCHAR(100),
+    CountryId INT NOT NULL,
+    StateId INT NOT NULL,
+    CityId INT NOT NULL,
+    SupplierGroupId INT NOT NULL,
+    RegionId INT NOT NULL,
+    Address VARCHAR(255),
+    PostalCode VARCHAR(20),
+    Phone VARCHAR(20),
+    Website VARCHAR(20),
+    Fax VARCHAR(20),
+    Email VARCHAR(20),
+    CreatedBy VARCHAR(100),
+    CreatedDate DATETIME DEFAULT GETDATE(),
+    UpdatedBy VARCHAR(100),
+    UpdatedDate DATETIME,
+    IsActive BIT DEFAULT 1,
+    FOREIGN KEY (CountryId) REFERENCES Country(Id),
+    FOREIGN KEY (StateId) REFERENCES State(Id),
+    FOREIGN KEY (CityId) REFERENCES City(Id),
+    FOREIGN KEY (SupplierGroupId) REFERENCES SupplierGroups(Id),
+    FOREIGN KEY (RegionId) REFERENCES Region(Id)
+);
+
+CREATE TABLE Sales (
+    Id INT IDENTITY(1,1) PRIMARY KEY,
+    CustomerId INT NOT NULL,
+    Date DATETIME NOT NULL,
+    PaymentAccount VARCHAR(255),
+    GrandTotal DECIMAL(18,2),
+    Discount DECIMAL(18,2),
+    TotalDiscount DECIMAL(18,2),
+    NoTax DECIMAL(18,2),
+    GstPercentage INT NOT NULL,
+    GST DECIMAL(18,2),
+    TotalTax DECIMAL(18,2),
+    ShippingCost DECIMAL(18,2),
+    NetTotal DECIMAL(18,2),
+    PaidAmount DECIMAL(18,2),
+    Due DECIMAL(18,2),
+    Change DECIMAL(18,2),
+    Details VARCHAR(MAX),
+    CreatedBy VARCHAR(100),
+    CreatedDate DATETIME DEFAULT GETDATE(),
+    UpdatedBy VARCHAR(100),
+    UpdatedDate DATETIME,
+    IsActive BIT DEFAULT 1,
+    FOREIGN KEY (CustomerId) REFERENCES Customer(Id)
+);
+
+CREATE TABLE SaleLineItems (
+    Id INT IDENTITY(1,1) PRIMARY KEY,
+    SalesId INT NOT NULL,
+    ProductName VARCHAR(255),
+    Description VARCHAR(255),
+    UnitName VARCHAR(100),
+    Quantity INT,
+    Rate DECIMAL(18,2),
+    Total DECIMAL(18,2),
+    Discount DECIMAL(18,2),
+    CreatedBy VARCHAR(100),
+    CreatedDate DATETIME DEFAULT GETDATE(),
+    UpdatedBy VARCHAR(100),
+    UpdatedDate DATETIME,
+    IsActive BIT DEFAULT 1,
+    FOREIGN KEY (SalesId) REFERENCES Sales(Id)
+);
+
+CREATE TABLE Purchases (
+    Id INT IDENTITY(1,1) PRIMARY KEY,
+    SupplierId INT NOT NULL,
+    Date DATETIME NOT NULL,
+    PaymentAccount VARCHAR(255),
+    GrandTotal DECIMAL(18,2),
+    Discount DECIMAL(18,2),
+    TotalDiscount DECIMAL(18,2),
+    NoTax DECIMAL(18,2),
+    GstPercentage INT NOT NULL,
+    GST DECIMAL(18,2),
+    TotalTax DECIMAL(18,2),
+    ShippingCost DECIMAL(18,2),
+    NetTotal DECIMAL(18,2),
+    PaidAmount DECIMAL(18,2),
+    Due DECIMAL(18,2),
+    Change DECIMAL(18,2),
+    Details VARCHAR(MAX),
+    CreatedBy VARCHAR(100),
+    CreatedDate DATETIME DEFAULT GETDATE(),
+    UpdatedBy VARCHAR(100),
+    UpdatedDate DATETIME,
+    IsActive BIT DEFAULT 1,
+    FOREIGN KEY (SupplierId) REFERENCES Supplier(Id)
+);
+
+CREATE TABLE PurchaseLineItems (
+    Id INT IDENTITY(1,1) PRIMARY KEY,
+    PurchasesId INT NOT NULL,
+    ProductName VARCHAR(255),
+    Description VARCHAR(255),
+    UnitName VARCHAR(100),
+    Quantity INT,
+    Rate DECIMAL(18,2),
+    Total DECIMAL(18,2),
+    Discount DECIMAL(18,2),
+    CreatedBy VARCHAR(100),
+    CreatedDate DATETIME DEFAULT GETDATE(),
+    UpdatedBy VARCHAR(100),
+    UpdatedDate DATETIME,
+    IsActive BIT DEFAULT 1,
+    FOREIGN KEY (PurchasesId) REFERENCES Purchases(Id)
+);
+
+CREATE TABLE ChartOfAccount (
+    Id INT IDENTITY(1,1) PRIMARY KEY,
+    HeadName VARCHAR(255),
+    HeadCode INT,
+    HeadLevel INT,
+    HeadType VARCHAR(20),
+    HeadCodeName VARCHAR(50),
+    IsGl BIT DEFAULT 0,
+    IsTransaction BIT DEFAULT 0,
+    ParentHead INT,
+    PHeadName VARCHAR(255),
+    Balance DECIMAL(18,2),
+    OpeningBalance DECIMAL(18,2),
+    CreatedBy VARCHAR(100),
+    CreatedDate DATETIME DEFAULT GETDATE(),
+    UpdatedBy VARCHAR(100),
+    UpdatedDate DATETIME,
+    IsActive BIT DEFAULT 1
+);
+
+CREATE TABLE OpeningBalance (
+    Id INT IDENTITY(1,1) PRIMARY KEY,
+    Date DATETIME NOT NULL,
+    AccountHeadId INT NOT NULL,
+    BalanceType INT NOT NULL,
+    Amount DECIMAL(18,2),
+    Remark VARCHAR(255),
+    CreatedBy VARCHAR(100),
+    CreatedDate DATETIME DEFAULT GETDATE(),
+    UpdatedBy VARCHAR(100),
+    UpdatedDate DATETIME,
+    IsActive BIT DEFAULT 1,
+    FOREIGN KEY (AccountHeadId) REFERENCES ChartOfAccount(Id)
+);
+
+CREATE TABLE PurchaseOrder (
+    Id INT IDENTITY(1,1) PRIMARY KEY,
+    PurchaseOrderNo VARCHAR(100),
+    ApprovalStatus INT NOT NULL,
+    SupplierId INT NOT NULL,
+    ApproveLevelId INT NOT NULL,
+    PaymentTermId INT NOT NULL,
+    CurrencyId INT NOT NULL,
+    IncotermsId INT NOT NULL,
+    PoDate DATETIME NOT NULL,
+    DeliveryDate DATETIME NOT NULL,
+    Remarks VARCHAR(50),
+    FxRate DECIMAL(10,6),
+    Tax DECIMAL(18,2),
+    Location VARCHAR(100), 
+    ContactNumber VARCHAR(50) NULL;
+    Shipping DECIMAL(18,2),
+    Discount DECIMAL(18,2),
+    SubTotal DECIMAL(18,2),
+    NetTotal DECIMAL(18,2),  
+    CreatedBy VARCHAR(100),
+    CreatedDate DATETIME DEFAULT GETDATE(),
+    UpdatedBy VARCHAR(100),
+    UpdatedDate DATETIME,
+    IsActive BIT DEFAULT 1,
+    PoLines NVARCHAR(max),
+);
+
+CREATE TABLE Recurring (
+    Id INT IDENTITY(1,1) PRIMARY KEY,
+    RecurringName VARCHAR(100) NOT NULL,
+    CreatedBy VARCHAR(100),
+    CreatedDate DATETIME DEFAULT GETDATE(),
+    UpdatedBy VARCHAR(100),
+    UpdatedDate DATETIME,
+    IsActive BIT DEFAULT 1
+);
+
+CREATE TABLE TaxCode (
+    Id INT IDENTITY(1,1) PRIMARY KEY,
+    Name VARCHAR(100) NOT NULL,
+    CreatedBy VARCHAR(100),
+    CreatedDate DATETIME DEFAULT GETDATE(),
+    UpdatedBy VARCHAR(100),
+    UpdatedDate DATETIME,
+    IsActive BIT DEFAULT 1
+);
+
+CREATE TABLE [PasswordHistory] (
+    Id INT IDENTITY(1,1) PRIMARY KEY,
+    UserId INT NOT NULL,
+    PasswordHash VARCHAR(200) NOT NULL,
+    ChangedAtUtc DATETIME DEFAULT GETDATE(),
+    CONSTRAINT FK_PasswordHistory_User FOREIGN KEY (UserId) REFERENCES [User](Id) ON DELETE CASCADE
+);
+GO
+
+CREATE INDEX IX_PasswordHistory_User_ChangedAt
+ON [PasswordHistory](UserId, ChangedAtUtc DESC);
+GO
+
+CREATE TABLE PurchaseOrderTemp (
+    Id INT IDENTITY(1,1) PRIMARY KEY,
+    PurchaseOrderNo VARCHAR(100),
+    ApprovalStatus INT NOT NULL,
+    SupplierId INT NOT NULL,
+    ApproveLevelId INT NOT NULL,
+    PaymentTermId INT NOT NULL,
+    CurrencyId INT NOT NULL,
+    IncotermsId INT NOT NULL,
+    PoDate DATETIME NOT NULL,
+    DeliveryDate DATETIME NOT NULL,
+    Remarks VARCHAR(50),
+    FxRate DECIMAL(10,6),
+    Tax DECIMAL(18,2),
+    Shipping DECIMAL(18,2),
+    Discount DECIMAL(18,2),
+    SubTotal DECIMAL(18,2),
+    NetTotal DECIMAL(18,2),  
+    CreatedBy VARCHAR(100),
+    CreatedDate DATETIME DEFAULT GETDATE(),
+    UpdatedBy VARCHAR(100),
+    UpdatedDate DATETIME,
+    IsActive BIT DEFAULT 1,
+    PoLines NVARCHAR(max),
+);
+
+
+CREATE TABLE Strategy (
+    Id INT IDENTITY(1,1) PRIMARY KEY,
+    StrategyName VARCHAR(100) NOT NULL,
+    CreatedBy VARCHAR(100),
+    CreatedDate DATETIME DEFAULT GETDATE(),
+    UpdatedBy VARCHAR(100),
+    UpdatedDate DATETIME,
+    IsActive BIT DEFAULT 1
+);
+
+
+CREATE TABLE StockTake (
+    Id               INT IDENTITY(1,1) PRIMARY KEY,
+    WarehouseTypeId  INT           NOT NULL,
+    SupplierId       INT           NOT NULL,
+    TakeTypeId       TINYINT       NOT NULL,     
+    StrategyId       INT           NULL,         
+    Freeze           BIT           NOT NULL DEFAULT 0,
+    Status           TINYINT       null,
+    CreatedBy        VARCHAR(100),
+    CreatedDate      DATETIME      DEFAULT GETDATE(),
+    UpdatedBy        VARCHAR(100),
+    UpdatedDate      DATETIME,
+    IsActive         BIT           DEFAULT 1
+ 
+);
+ALTER TABLE StockTake
+ADD CONSTRAINT CK_StockTake_TakeType CHECK (TakeTypeId IN (1,2));
+
+
+CREATE TABLE StockTakeLines (
+    Id               INT IDENTITY(1,1) PRIMARY KEY,
+    StockTakeId      INT            NOT NULL,
+    WarehouseTypeId      INT            NOT NULL,
+    SupplierId      INT            NOT NULL,
+    Status           TINYINT       null,
+    ItemId           bigint            NOT NULL,
+    BinId           bigint            NOT NULL,
+    OnHand     DECIMAL(18,3)  NOT NULL,     
+    CountedQty       DECIMAL(18,3)  NULL,   
+    BadCountedQty    DECIMAL(18,3)  NULL,      
+    VarianceQty      DECIMAL(18,3)  NULL, 
+    ReasonId      INT NULL,
+    Barcode          VARCHAR(100),
+    Remarks          VARCHAR(255),
+    Selected BIT NULL, 
+
+    CreatedBy        VARCHAR(100),
+    CreatedDate      DATETIME       DEFAULT GETDATE(),
+    UpdatedBy        VARCHAR(100),
+    UpdatedDate      DATETIME,
+    IsActive         BIT            DEFAULT 1,
+);
+
+
+
+
+
+
+CREATE TABLE dbo.StockTakeInventoryAdjustment (
+    Id               BIGINT IDENTITY(1,1) PRIMARY KEY,
+
+    -- What & where
+    ItemId           INT            NOT NULL,
+    WarehouseTypeId  INT            NOT NULL,
+    BinId       INT            NOT NULL,
+    SupplierId       INT            NOT NULL,
+    
+
+    -- When
+    TxnDate          DATETIME2(3)   NOT NULL CONSTRAINT DF_STIA_TxnDate DEFAULT SYSUTCDATETIME(),
+
+    -- Why
+    ReasonId      INT NULL,        -- FK to AdjustmentReason (optional)
+    Remarks          NVARCHAR(255)  NULL,
+
+    -- Source (document lineage)
+    SourceType       VARCHAR(40)    NOT NULL,    -- e.g. 'StockTake'
+    SourceId         INT            NOT NULL,    -- StockTake.Id
+    SourceLineId     INT            NULL,        -- StockTakeLines.Id
+
+    -- Quantities (one direction per row)
+    QtyIn            DECIMAL(18,3)  NOT NULL CONSTRAINT DF_STIA_QtyIn  DEFAULT (0),
+    QtyOut           DECIMAL(18,3)  NOT NULL CONSTRAINT DF_STIA_QtyOut DEFAULT (0),
+
+    -- Optional audit snapshot
+    QtyBefore        DECIMAL(18,3)  NULL,
+    CountedQty       DECIMAL(18,3)  NULL,   
+    BadCountedQty    DECIMAL(18,3)  NULL, 
+    QtyAfter         DECIMAL(18,3)  NULL,
+
+    -- Cost hooks (optional)
+    UnitCost         DECIMAL(18,6)  NULL,        -- if costing later
+    ExtCost          DECIMAL(18,6)  NULL,        -- UnitCost * (QtyIn - QtyOut)
+
+    CreatedBy        NVARCHAR(100)  NULL,
+    CreatedDate      DATETIME2(3)   CONSTRAINT DF_STIA_CreatedDate DEFAULT SYSUTCDATETIME(),
+    UpdatedBy        NVARCHAR(100)  NULL,
+    UpdatedDate      DATETIME2(3)   NULL,
+    IsActive         BIT            NOT NULL CONSTRAINT DF_STIA_IsActive DEFAULT (1)
+);
+
+
+CREATE TABLE StockReorder (
+    Id               INT IDENTITY(1,1) PRIMARY KEY,
+    WarehouseTypeId  INT           NOT NULL,
+    MethodId       TINYINT       NOT NULL,   
+    HorizonDays  INT           NOT NULL,
+    IncludeLeadTime           BIT           NOT NULL DEFAULT 0,
+    Status           INT       null,
+    CreatedBy        VARCHAR(100),
+    CreatedDate      DATETIME      DEFAULT GETDATE(),
+    UpdatedBy        VARCHAR(100),
+    UpdatedDate      DATETIME,
+    IsActive         BIT           DEFAULT 1
+ 
+);
+
+
+
+CREATE TABLE StockReorderLines (
+    Id               INT IDENTITY(1,1) PRIMARY KEY,
+    StockReorderId      INT            NOT NULL,
+    WarehouseTypeId      INT            NOT NULL,
+    ItemId           bigint            NOT NULL,
+    OnHand     DECIMAL(18,3)  NOT NULL,     
+    Min       DECIMAL(18,3)  NULL,   
+    Max    DECIMAL(18,3)  NULL,  
+    ReorderQty   DECIMAL(18,3)  NULL,
+    LeadDays  INT            NOT NULL,
+    UsageHorizon  INT            NOT NULL,
+    Suggested  INT            NOT NULL,
+    Status           TINYINT       null,
+    Selected BIT NULL, 
+
+    CreatedBy        VARCHAR(100),
+    CreatedDate      DATETIME       DEFAULT GETDATE(),
+    UpdatedBy        VARCHAR(100),
+    UpdatedDate      DATETIME,
+    IsActive         BIT            DEFAULT 1,
+);
+
+CREATE TABLE StockReorderLineSuppliers (
+    Id                   INT IDENTITY(1,1) PRIMARY KEY,
+    StockReorderLineId   INT             NOT NULL,
+    SupplierId           BIGINT          NOT NULL,
+    Price                DECIMAL(18,4)       NULL,
+    Qty                  DECIMAL(18,3)       NULL,
+    Selected             BIT             NOT NULL DEFAULT 0,
+    CreatedBy            VARCHAR(100)        NULL,
+    CreatedDate          DATETIME            NULL DEFAULT GETDATE(),
+    UpdatedBy            VARCHAR(100)        NULL,
+    UpdatedDate          DATETIME            NULL,
+    IsActive             BIT                 NOT NULL DEFAULT 1,
+
+    
+);
+
+
+CREATE TABLE SalesOrder (
+    Id               INT IDENTITY(1,1) PRIMARY KEY,
+    QuotationNo INT           NOT NULL,
+    CustomerId  INT           NOT NULL,
+    WarehouseId  INT           NOT NULL,
+    RequestedDate DATETIME NOT NULL,
+    DeliveryDate DATETIME NOT NULL,
+    Status           TINYINT       null,
+    Shipping Int,
+    Discount  Int,
+    GstPct Int,
+    CreatedBy        VARCHAR(100),
+    CreatedDate      DATETIME      DEFAULT GETDATE(),
+    UpdatedBy        VARCHAR(100),
+    UpdatedDate      DATETIME,
+    IsActive         BIT           DEFAULT 1
+ 
+);
+
+
+
+CREATE TABLE SalesOrderLines (
+    Id               INT IDENTITY(1,1) PRIMARY KEY,
+    SalesOrderId      INT            NOT NULL,
+    ItemId           bigint            NOT NULL,
+    ItemName VARCHAR(255),
+    Uom INT,
+    Quantity INT,
+    UnitPrice DECIMAL(18,2),
+    Discount DECIMAL(18,2),
+    Tax VARCHAR(255),
+    Total DECIMAL(18,2),  
+    CreatedBy        VARCHAR(100),
+    CreatedDate      DATETIME       DEFAULT GETDATE(),
+    UpdatedBy        VARCHAR(100),
+    UpdatedDate      DATETIME,
+    IsActive         BIT            DEFAULT 1,
+);
+
+CREATE TABLE Picking ( 
+Id INT IDENTITY(1,1) PRIMARY KEY, 
+SoId INT NOT NULL, 
+SoDate DATE NULL,
+DeliveryDate DATE NULL,
+BarCode NVARCHAR(100) NULL, 
+QrCode NVARCHAR(400) NULL, 
+BarCodeSrc VARBINARY(MAX) NULL, 
+QrCodeSrc VARBINARY(MAX) NULL, 
+Status TINYINT NOT NULL DEFAULT 0, 
+CreatedBy INT NULL, 
+CreatedDate DATETIME2(7) NOT NULL DEFAULT SYSUTCDATETIME(), 
+UpdatedBy INT NULL, 
+UpdatedDate DATETIME2(7) NULL, 
+IsActive BIT NOT NULL DEFAULT 1 );
+ 
+CREATE TABLE PickingLine ( 
+Id INT IDENTITY(1,1) PRIMARY KEY, 
+PickId INT NOT NULL, 
+SoLineId INT NOT NULL, 
+ItemId BIGINT NOT NULL, 
+WarehouseId INT NOT NULL, 
+SupplierId INT NULL, 
+BinId INT NULL, 
+Quantity DECIMAL(18,4) NOT NULL, 
+CartonId INT NULL, 
+CreatedBy INT NULL, 
+CreatedDate DATETIME2(7) NOT NULL DEFAULT SYSUTCDATETIME(), 
+UpdatedBy INT NULL, 
+UpdatedDate DATETIME2(7) NULL, 
+IsActive BIT NOT NULL DEFAULT 1 );
+ 
+IF OBJECT_ID('dbo.PickingSerial', 'U') IS NULL
+CREATE TABLE dbo.PickingSerial (
+  DateKey     char(8)  NOT NULL PRIMARY KEY,  -- yyyymmdd
+  LastNumber  int      NOT NULL
+);
+
+
+CREATE TABLE dbo.CreditNote (
+  Id               INT IDENTITY(1,1) PRIMARY KEY,
+  CreditNoteNo     VARCHAR(30)  NOT NULL,  -- e.g. CN-0001
+  DoId             INT          NOT NULL,  -- Delivery Order Id (source)
+  DoNumber         VARCHAR(50)  NULL,      -- denormalized for display
+  SiId             INT          NOT NULL,      -- optional: SalesInvoice linked to DO (read-only)
+  SiNumber         VARCHAR(50)  NULL,
+  CustomerId       INT          NOT NULL,
+  CustomerName     VARCHAR(200) NULL,
+  CreditNoteDate   DATE         NOT NULL,  -- doc date
+  Status           TINYINT      NULL DEFAULT 1, -- 1=Draft,2=Approved,3=Posted
+  Subtotal         DECIMAL(18,2)NULL DEFAULT 0, -- before tax (per requirement)
+  CreatedBy        INT          NULL,
+  CreatedDate      DATETIME     NOT NULL DEFAULT SYSUTCDATETIME(),
+  UpdatedBy        INT          NULL,
+  UpdatedDate      DATETIME     NULL,
+  IsActive         BIT          NOT NULL DEFAULT 1
+);
+
+
+
+CREATE TABLE dbo.CreditNoteLine (
+  Id               INT IDENTITY(1,1) PRIMARY KEY,
+  CreditNoteId     INT          NOT NULL ,
+  DoId         INT        NOT  NULL,  
+  SiId  INT        NOT  NULL,
+  DoLineId INT NULL
+  ItemId           INT          NOT NULL,
+  ItemName         VARCHAR(200) NOT NULL,
+  Uom              VARCHAR(50)  NULL,
+  DeliveredQty     DECIMAL(18,4) NOT NULL DEFAULT 0,   -- from DO (read-only on UI)
+  ReturnedQty      DECIMAL(18,4) NOT NULL DEFAULT 0,   -- editable
+  UnitPrice        DECIMAL(18,4) NULL DEFAULT 0,
+  DiscountPct      DECIMAL(9,4)   NULL DEFAULT 0,
+GstPct DECIMAL(18,2)  NULL DEFAULT(0),
+Tax  NVARCHAR(20)  NULL,
+  TaxCodeId        INT           NULL,                  -- FK to TaxCode table if you have it
+  LineNet          DECIMAL(18,2)  NULL DEFAULT 0,   -- ReturnedQty * Price * (1-Disc)
+  ReasonId         INT           NULL ,
+  RestockDispositionId TINYINT   NULL ,
+  WarehouseId       INT           NULL ,
+  SupplierId        INT           NULL , 
+  BinId             INT           NULL ,
+  CreatedBy        INT           NULL,
+  CreatedDate      DATETIME      NOT NULL DEFAULT SYSUTCDATETIME(),
+  UpdatedBy        INT           NULL,
+  UpdatedDate      DATETIME      NULL,
+  IsActive         BIT           NOT NULL DEFAULT 1
+);
+
+CREATE TABLE dbo.ArReceipt
+(
+    Id             INT IDENTITY(1,1) PRIMARY KEY,
+    ReceiptNo      NVARCHAR(30) NOT NULL,       -- e.g. RC-2025-000001
+    CustomerId     INT          NOT NULL,
+    ReceiptDate    DATE         NOT NULL,
+    PaymentMode    NVARCHAR(20) NOT NULL,       -- 'CASH' or 'BANK'
+    BankId         INT          NULL,           -- FK if PaymentMode = BANK
+    AmountReceived DECIMAL(18,2) NOT NULL,      -- header amount
+    TotalAllocated DECIMAL(18,2) NOT NULL,      -- sum of allocations
+    Unallocated    DECIMAL(18,2) NOT NULL,      -- AmountReceived - TotalAllocated
+    ReferenceNo    NVARCHAR(50)  NULL,          -- cheque no / UTR / etc
+    Remarks        NVARCHAR(200) NULL,
+    Status         NVARCHAR(20)  NOT NULL DEFAULT('Posted'),
+    IsActive       BIT           NOT NULL DEFAULT(1),
+
+    CreatedBy      INT           NOT NULL,
+    CreatedDate    DATETIME2     NOT NULL DEFAULT(SYSUTCDATETIME()),
+    UpdatedBy      INT           NULL,
+    UpdatedDate    DATETIME2     NULL
+);
+CREATE TABLE dbo.ArReceiptAllocation
+(
+    Id              INT IDENTITY(1,1) PRIMARY KEY,
+    ReceiptId       INT           NOT NULL,
+    InvoiceId       INT           NOT NULL,         -- FK to dbo.salesinvoice.Id
+    AllocatedAmount DECIMAL(18,2) NOT NULL,
+
+    IsActive        BIT           NOT NULL DEFAULT(1),
+    CreatedBy       INT           NOT NULL,
+    CreatedDate     DATETIME2     NOT NULL DEFAULT(SYSUTCDATETIME()),
+    UpdatedBy      INT           NULL,
+    UpdatedDate    DATETIME2     NULL
+);
+
+CREATE   VIEW [dbo].[vwSalesInvoiceOpenForReceipt]
+AS
+WITH Pay AS (
+    SELECT
+        ra.InvoiceId,
+        SUM(ra.AllocatedAmount) AS PaidAmount
+    FROM dbo.ArReceiptAllocation ra
+    INNER JOIN dbo.ArReceipt r
+        ON r.Id = ra.ReceiptId
+       AND r.IsActive = 1
+    WHERE ra.IsActive = 1
+    GROUP BY ra.InvoiceId
+),
+Cn AS (
+    SELECT
+        cn.SiId AS InvoiceId,
+        SUM(ISNULL(cn.Subtotal,0)) AS CreditAmount
+    FROM dbo.CreditNote cn
+    WHERE cn.IsActive = 1
+      AND cn.Status > 1      -- only Approved / Posted CN
+      AND cn.SiId IS NOT NULL
+    GROUP BY cn.SiId
+),
+Cust AS (
+    SELECT
+        si.Id AS InvoiceId,
+        COALESCE(so1.CustomerId, so2.CustomerId) AS CustomerId
+    FROM dbo.SalesInvoice si
+    LEFT JOIN dbo.SalesOrder so1
+        ON so1.Id = si.SoId
+    LEFT JOIN dbo.DeliveryOrder d
+        ON d.Id = si.DoId
+    LEFT JOIN dbo.SalesOrder so2
+        ON so2.Id = d.SoId
+)
+SELECT
+    si.Id          AS Id,
+    si.InvoiceNo   AS InvoiceNo,
+    si.InvoiceDate AS InvoiceDate,
+    si.Total       AS Amount,
+    ISNULL(p.PaidAmount, 0) AS PaidAmount,
+    si.Total
+      - ISNULL(p.PaidAmount, 0)
+      - ISNULL(c.CreditAmount, 0) AS Balance,
+    cu.CustomerId  AS CustomerId
+FROM dbo.SalesInvoice si
+LEFT JOIN Pay  p  ON p.InvoiceId = si.Id
+LEFT JOIN Cn   c  ON c.InvoiceId = si.Id
+LEFT JOIN Cust cu ON cu.InvoiceId = si.Id
+WHERE si.IsActive = 1;
+GO
+
+CREATE   VIEW [dbo].[vwArAgingBase]
+AS
+WITH Inv AS (
+    SELECT
+        sil.SiId            AS InvoiceId,
+        SUM(sil.LineAmount) AS OriginalAmount
+    FROM dbo.SalesInvoiceLine sil
+    GROUP BY sil.SiId
+),
+Pay AS (
+    SELECT
+        ra.InvoiceId,
+        SUM(ra.AllocatedAmount) AS PaidAmount
+    FROM dbo.ArReceiptAllocation ra
+    INNER JOIN dbo.ArReceipt r
+        ON r.Id = ra.ReceiptId
+       AND r.IsActive = 1
+    WHERE ra.IsActive = 1
+    GROUP BY ra.InvoiceId
+),
+Cn AS (
+    SELECT
+        cn.SiId AS InvoiceId,
+        SUM(ISNULL(cn.Subtotal,0)) AS CreditAmount
+    FROM dbo.CreditNote cn
+    WHERE cn.IsActive = 1
+      AND cn.SiId IS NOT NULL
+    GROUP BY cn.SiId
+)
+SELECT
+    si.Id          AS InvoiceId,
+    si.InvoiceNo,
+    si.InvoiceDate,
+
+    -- 🔹 Customer via SO (from SI.SoId OR DO.SoId)
+    so.CustomerId,
+    c.CustomerName,
+
+    -- 🔹 Payment term / DueDate (PaymentTermsName like '30 days', '15days', '8')
+    q.PaymentTermsId,
+    DueDate = DATEADD(
+        DAY,
+        ISNULL(
+            TRY_CONVERT(
+                INT,
+                LEFT(
+                    pt.PaymentTermsName,
+                    PATINDEX('%[^0-9]%', pt.PaymentTermsName + 'X') - 1
+                )
+            ),
+            0
+        ),
+        si.InvoiceDate
+    ),
+
+    -- 🔹 Amounts
+    inv.OriginalAmount,
+    ISNULL(pay.PaidAmount,0)  AS PaidAmount,
+    ISNULL(cn.CreditAmount,0) AS CreditAmount,
+    inv.OriginalAmount
+      - ISNULL(pay.PaidAmount,0)
+      - ISNULL(cn.CreditAmount,0) AS Balance
+FROM dbo.SalesInvoice si
+LEFT JOIN dbo.DeliveryOrder doHdr
+       ON doHdr.Id = si.DoId
+LEFT JOIN dbo.SalesOrder so
+       ON so.Id = COALESCE(si.SoId, doHdr.SoId)   -- ✅ if SI.SoId is null, use DO.SoId
+LEFT JOIN dbo.Customer c
+       ON c.Id = so.CustomerId
+LEFT JOIN dbo.Quotation q
+       ON q.Id = so.QuotationNo                   -- if you link quotation here
+LEFT JOIN dbo.PaymentTerms pt
+       ON pt.Id = q.PaymentTermsId
+LEFT JOIN Inv inv
+       ON inv.InvoiceId = si.Id
+LEFT JOIN Pay pay
+       ON pay.InvoiceId = si.Id
+LEFT JOIN Cn  cn
+       ON cn.InvoiceId = si.Id
+WHERE si.IsActive = 1
+  AND (inv.OriginalAmount
+       - ISNULL(pay.PaidAmount,0)
+       - ISNULL(cn.CreditAmount,0)) > 0;
+GO
+
+CREATE   PROCEDURE [dbo].[sp_ArAgingSummary]
+(
+    @FromDate DATE = NULL,
+    @ToDate   DATE = NULL
+)
+AS
+BEGIN
+    SET NOCOUNT ON;
+
+    IF @ToDate IS NULL
+        SET @ToDate = CAST(GETDATE() AS DATE);
+
+    -- if FromDate not given, show from the beginning
+    IF @FromDate IS NULL
+        SET @FromDate = '1900-01-01';
+
+    ;WITH Base AS (
+        SELECT
+            b.*,
+            AgeRaw = DATEDIFF(DAY, b.InvoiceDate, @ToDate)   -- 🔹 based on INVOICE DATE
+        FROM dbo.vwArAgingBase b
+        WHERE b.InvoiceDate >= @FromDate
+          AND b.InvoiceDate <= @ToDate
+    ),
+    Norm AS (
+        SELECT
+            *,
+            AgeDays =
+                CASE WHEN AgeRaw < 0 THEN 0 ELSE AgeRaw END,
+            BucketName =
+                CASE 
+                    WHEN AgeRaw < 0               THEN '0-30'   -- future invoice (rare)
+                    WHEN AgeRaw BETWEEN 0  AND 30 THEN '0-30'
+                    WHEN AgeRaw BETWEEN 31 AND 60 THEN '31-60'
+                    WHEN AgeRaw BETWEEN 61 AND 90 THEN '61-90'
+                    ELSE '90+'
+                END
+        FROM Base
+    )
+    SELECT
+        CustomerId,
+        CustomerName,
+        InvoiceCount          = COUNT(*),
+
+        TotalOriginalAmount   = SUM(OriginalAmount),
+        TotalPaidAmount       = SUM(PaidAmount),
+        TotalCreditAmount     = SUM(CreditAmount),
+        TotalOutstanding      = SUM(Balance),
+
+        Bucket0_30  = SUM(CASE WHEN BucketName = '0-30' THEN Balance ELSE 0 END),
+        Bucket31_60 = SUM(CASE WHEN BucketName = '31-60' THEN Balance ELSE 0 END),
+        Bucket61_90 = SUM(CASE WHEN BucketName = '61-90' THEN Balance ELSE 0 END),
+        Bucket90Plus= SUM(CASE WHEN BucketName = '90+'  THEN Balance ELSE 0 END)
+    FROM Norm
+    GROUP BY CustomerId, CustomerName
+    ORDER BY CustomerName;
+END
+GO
+
+CREATE OR ALTER PROCEDURE dbo.sp_ApAgingSummary
+(
+    @FromDate date,
+    @ToDate   date
+)
+AS
+BEGIN
+    SET NOCOUNT ON;
+
+    ;WITH Base AS (
+        SELECT
+            b.*,
+            AgeRaw = DATEDIFF(DAY, b.InvoiceDate, @ToDate)
+        FROM dbo.vwApAgingBase b
+        WHERE b.InvoiceDate >= @FromDate
+          AND b.InvoiceDate <= @ToDate
+    ),
+    Norm AS (
+        SELECT
+            SupplierId,
+            SupplierName,
+            Balance,
+            AgeRaw,
+            AgeDays =
+                CASE WHEN AgeRaw < 0 THEN 0 ELSE AgeRaw END,
+            Bucket =
+                CASE 
+                    WHEN AgeRaw < 0               THEN '0-30'
+                    WHEN AgeRaw BETWEEN 0  AND 30 THEN '0-30'
+                    WHEN AgeRaw BETWEEN 31 AND 60 THEN '31-60'
+                    WHEN AgeRaw BETWEEN 61 AND 90 THEN '61-90'
+                    ELSE '90+'
+                END
+        FROM Base
+    )
+    SELECT
+        SupplierId,
+        SupplierName,
+        InvoiceCount     = COUNT(1),
+        TotalOutstanding = SUM(Balance),
+        Bucket0_30       = SUM(CASE WHEN Bucket = '0-30' THEN Balance ELSE 0 END),
+        Bucket31_60      = SUM(CASE WHEN Bucket = '31-60' THEN Balance ELSE 0 END),
+        Bucket61_90      = SUM(CASE WHEN Bucket = '61-90' THEN Balance ELSE 0 END),
+        Bucket90Plus     = SUM(CASE WHEN Bucket = '90+'   THEN Balance ELSE 0 END)
+    FROM Norm
+    GROUP BY SupplierId, SupplierName
+    ORDER BY SupplierName;
+END;
+
+CREATE OR ALTER VIEW dbo.vwApAgingBase
+AS
+/*  Base: Supplier invoices (PIN)  */
+WITH PinBase AS
+(
+    SELECT
+        p.Id              AS InvoiceId,
+        p.InvoiceNo       AS InvoiceNo,
+        p.InvoiceDate     AS InvoiceDate,
+
+        -- ==== DUE DATE from Supplier -> PaymentTerms ====
+        -- Suppliers.TermsId -> PaymentTerms.Id
+        -- Extract leading number from PaymentTermsName (e.g. '30 days' -> 30)
+        DATEADD(
+            DAY,
+            ISNULL(
+                TRY_CONVERT(
+                    int,
+                    LEFT(pt.PaymentTermsName,
+                         CASE
+                             WHEN PATINDEX('%[^0-9]%', pt.PaymentTermsName + 'X') = 0
+                                 THEN LEN(pt.PaymentTermsName)
+                             ELSE PATINDEX('%[^0-9]%', pt.PaymentTermsName + 'X') - 1
+                         END
+                    )
+                ),
+                0
+            ),
+            p.InvoiceDate
+        ) AS DueDate,
+
+        p.SupplierId      AS SupplierId,
+        s.Name            AS SupplierName,
+
+        -- 🔸 Total amount (adjust if needed)
+        (p.Amount + p.Tax) AS OriginalAmount
+        -- if you want only Amount, use:  p.Amount AS OriginalAmount
+    FROM dbo.SupplierInvoicePin p
+    INNER JOIN dbo.Suppliers s
+        ON s.Id = p.SupplierId
+    LEFT JOIN dbo.PaymentTerms pt
+        ON pt.Id = s.TermsId
+       AND pt.IsActive = 1
+    WHERE p.IsActive = 1
+      -- AND p.Status = 3      -- (optional) only posted invoices
+),
+/*  Payments: SupplierPayment amounts per invoice  */
+Payments AS
+(
+    SELECT
+        sp.SupplierInvoiceId        AS InvoiceId,
+        SUM(sp.Amount)              AS PaidAmount
+    FROM dbo.SupplierPayment sp
+    WHERE sp.IsActive = 1
+      -- AND sp.Status = 3         -- (optional) only posted payments
+    GROUP BY sp.SupplierInvoiceId
+)
+SELECT
+    b.InvoiceId,
+    b.InvoiceNo,
+    b.InvoiceDate,
+    b.DueDate,
+    b.SupplierId,
+    b.SupplierName,
+    b.OriginalAmount,
+    ISNULL(p.PaidAmount, 0)   AS PaidAmount,
+    0                         AS CreditAmount,   -- (no debit note yet)
+    b.OriginalAmount - ISNULL(p.PaidAmount, 0) AS Balance
+FROM PinBase b
+LEFT JOIN Payments p
+    ON b.InvoiceId = p.InvoiceId
+WHERE b.OriginalAmount - ISNULL(p.PaidAmount, 0) <> 0;   -- only open invoices
+GO
+
+
+USE ERP_Finance;
+GO
+
+USE ERP_Finance;
+GO
+
+ALTER PROCEDURE dbo.sp_ArCollectionsForecastSummary
+    @FromDate date = NULL,
+    @ToDate   date = NULL
+AS
+BEGIN
+    SET NOCOUNT ON;
+
+    ;WITH Terms AS (
+        SELECT
+            si.Id AS InvoiceId,
+            COALESCE(so1.Id, so2.Id) AS SalesOrderId,
+            PaymentDays =
+                ISNULL(
+                    TRY_CONVERT(
+                        int,
+                        LEFT(
+                            pt.PaymentTermsName,
+                            NULLIF(CHARINDEX(' ', pt.PaymentTermsName + ' '), 0) - 1
+                        )
+                    ),
+                    0
+                )
+        FROM dbo.SalesInvoice si
+        LEFT JOIN dbo.SalesOrder  so1 ON so1.Id = si.SoId
+        LEFT JOIN dbo.DeliveryOrder d  ON d.Id  = si.DoId
+        LEFT JOIN dbo.SalesOrder  so2 ON so2.Id = d.SoId
+        LEFT JOIN dbo.Quotation   q   ON q.Id  = COALESCE(so1.QuotationNo, so2.QuotationNo)
+        LEFT JOIN dbo.PaymentTerms pt  ON pt.Id = q.PaymentTermsId
+    ),
+    Base AS (
+        SELECT
+            v.Id          AS InvoiceId,
+            v.InvoiceNo,
+            v.InvoiceDate,
+            v.Amount,
+            v.PaidAmount,
+            v.Balance,
+            v.CustomerId,
+            c.CustomerName,
+            DueDate = DATEADD(DAY, ISNULL(t.PaymentDays,0), v.InvoiceDate)
+        FROM dbo.vwSalesInvoiceOpenForReceipt v
+        LEFT JOIN dbo.Customer c ON c.Id = v.CustomerId
+        LEFT JOIN Terms t        ON t.InvoiceId = v.Id
+        WHERE v.Balance > 0
+          AND (@FromDate IS NULL OR DATEADD(DAY, ISNULL(t.PaymentDays,0), v.InvoiceDate) >= @FromDate)
+          AND (@ToDate   IS NULL OR DATEADD(DAY, ISNULL(t.PaymentDays,0), v.InvoiceDate) <= @ToDate)
+    ),
+    Norm AS (
+        SELECT
+            *,
+            AgeDays = DATEDIFF(DAY, GETDATE(), DueDate),
+            BucketName =
+                CASE
+                    WHEN DATEDIFF(DAY, GETDATE(), DueDate) BETWEEN 0  AND  7 THEN '0-7'
+                    WHEN DATEDIFF(DAY, GETDATE(), DueDate) BETWEEN 8  AND 14 THEN '8-14'
+                    WHEN DATEDIFF(DAY, GETDATE(), DueDate) BETWEEN 15 AND 30 THEN '15-30'
+                    ELSE '>30'
+                END
+        FROM Base
+    )
+    SELECT 
+        CustomerId,
+        CustomerName,
+        SUM(CASE WHEN BucketName = '0-7'   THEN Balance ELSE 0 END) AS Bucket0_7,
+        SUM(CASE WHEN BucketName = '8-14'  THEN Balance ELSE 0 END) AS Bucket8_14,
+        SUM(CASE WHEN BucketName = '15-30' THEN Balance ELSE 0 END) AS Bucket15_30,
+        SUM(CASE WHEN BucketName = '>30'   THEN Balance ELSE 0 END) AS Bucket30Plus,
+        SUM(Balance) AS TotalOutstanding
+    FROM Norm
+    GROUP BY CustomerId, CustomerName
+    ORDER BY CustomerName;
+END
+GO
+
+USE ERP_Finance;
+GO
+
+ALTER PROCEDURE dbo.sp_ArCollectionsForecastDetail
+    @CustomerId int,
+    @FromDate   date = NULL,
+    @ToDate     date = NULL
+AS
+BEGIN
+    SET NOCOUNT ON;
+
+    ;WITH Terms AS (
+        SELECT
+            si.Id AS InvoiceId,
+            COALESCE(so1.Id, so2.Id) AS SalesOrderId,
+            PaymentDays =
+                ISNULL(
+                    TRY_CONVERT(
+                        int,
+                        LEFT(
+                            pt.PaymentTermsName,
+                            NULLIF(CHARINDEX(' ', pt.PaymentTermsName + ' '), 0) - 1
+                        )
+                    ),
+                    0
+                )
+        FROM dbo.SalesInvoice si
+        LEFT JOIN dbo.SalesOrder  so1 ON so1.Id = si.SoId
+        LEFT JOIN dbo.DeliveryOrder d  ON d.Id  = si.DoId
+        LEFT JOIN dbo.SalesOrder  so2 ON so2.Id = d.SoId
+        LEFT JOIN dbo.Quotation   q   ON q.Id  = COALESCE(so1.QuotationNo, so2.QuotationNo)
+        LEFT JOIN dbo.PaymentTerms pt  ON pt.Id = q.PaymentTermsId
+    ),
+    Base AS (
+        SELECT
+            v.Id          AS InvoiceId,
+            v.InvoiceNo,
+            v.InvoiceDate,
+            v.Balance,
+            v.CustomerId,
+            c.CustomerName,
+            DueDate = DATEADD(DAY, ISNULL(t.PaymentDays,0), v.InvoiceDate)
+        FROM dbo.vwSalesInvoiceOpenForReceipt v
+        LEFT JOIN dbo.Customer c ON c.Id = v.CustomerId
+        LEFT JOIN Terms t        ON t.InvoiceId = v.Id
+        WHERE v.Balance   > 0
+          AND v.CustomerId = @CustomerId
+          AND (@FromDate IS NULL OR DATEADD(DAY, ISNULL(t.PaymentDays,0), v.InvoiceDate) >= @FromDate)
+          AND (@ToDate   IS NULL OR DATEADD(DAY, ISNULL(t.PaymentDays,0), v.InvoiceDate) <= @ToDate)
+    )
+    SELECT
+        InvoiceId,
+        InvoiceNo,
+        InvoiceDate,
+        DueDate,
+        Balance,
+        BucketName =
+            CASE
+                WHEN DATEDIFF(DAY, GETDATE(), DueDate) BETWEEN 0  AND  7 THEN '0-7'
+                WHEN DATEDIFF(DAY, GETDATE(), DueDate) BETWEEN 8  AND 14 THEN '8-14'
+                WHEN DATEDIFF(DAY, GETDATE(), DueDate) BETWEEN 15 AND 30 THEN '15-30'
+                ELSE '>30'
+            END
+    FROM Base
+    ORDER BY InvoiceDate;
+END
+GO
+
+
+create TABLE [dbo].[PurchaseOrderReceiving](
+	[Id] [int] IDENTITY(1,1) NOT NULL,
+	[PurchaseOrderId] [int] NOT NULL,
+	[PurchaseOrderNo] [varchar](100) NOT NULL,
+	[ItemKey] [nvarchar](200) NOT NULL,
+	[Qty] [decimal](18, 2) NOT NULL,
+
+        IsActive        BIT          NOT NULL DEFAULT(1),
+	[CreatedBy] [varchar](100) NULL,
+	[CreatedDate] [datetime] NOT NULL,
+        UpdatedBy      INT           NULL,
+        UpdatedDate    DATETIME     NULL
+)
+
+
+
