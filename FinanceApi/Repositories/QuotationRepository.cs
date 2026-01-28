@@ -158,7 +158,22 @@ VALUES
                 dto.NeedsHodApproval,
                 UserId = userId
             });
+            const string insertQtSet = @"
+INSERT INTO dbo.QuotationItemSet (QuotationId, ItemSetId, CreatedBy, CreatedDate, IsActive)
+VALUES (@QuotationId, @ItemSetId, @UserId, GETDATE(), 1);";
 
+            if (dto.ItemSetIds != null && dto.ItemSetIds.Count > 0)
+            {
+                foreach (var setId in dto.ItemSetIds.Distinct())
+                {
+                    await Connection.ExecuteAsync(insertQtSet, new
+                    {
+                        QuotationId = quotationId,
+                        ItemSetId = setId,
+                        UserId = userId
+                    });
+                }
+            }
             // ---------- 4) Insert lines ----------
             const string insertLine = @"
 INSERT INTO dbo.QuotationLine
