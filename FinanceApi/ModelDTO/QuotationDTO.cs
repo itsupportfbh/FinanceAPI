@@ -44,11 +44,8 @@
         public QuotationStatus Status { get; set; } = QuotationStatus.Draft;
 
         public int CustomerId { get; set; }
-        public string? CustomerName { get; set; }
-
         public int CurrencyId { get; set; }
         public decimal FxRate { get; set; } = 1m;
-
         public int PaymentTermsId { get; set; }
         public DateTime? DeliveryDate { get; set; }
 
@@ -61,9 +58,10 @@
         public string? Remarks { get; set; }
         public string? DeliveryTo { get; set; }
 
-        // ✅ NEW: multi item sets
-        public List<int> ItemSetIds { get; set; } = new();
+        // ✅ NEW (1=ITEM, 2=ITEMSET)
+        public byte LineSourceId { get; set; } = 1;
 
+        public List<int> ItemSetIds { get; set; } = new();
         public List<QuotationLineDTO> Lines { get; set; } = new();
     }
 

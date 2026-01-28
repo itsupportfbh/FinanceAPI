@@ -127,15 +127,18 @@ ORDER BY Id DESC;";
             const string insertHead = @"
 INSERT INTO dbo.Quotation
 (Number, Status, CustomerId, CurrencyId, FxRate, PaymentTermsId, DeliveryDate,
- Remarks, DeliveryTo,                         -- ✅ NEW (Header)
+ Remarks, DeliveryTo,
+ LineSourceId,                         -- ✅ NEW
  Subtotal, TaxAmount, Rounding, GrandTotal, NeedsHodApproval,
  CreatedBy, CreatedDate, IsActive)
 OUTPUT INSERTED.Id
 VALUES
 (@Number, @Status, @CustomerId, @CurrencyId, @FxRate, @PaymentTermsId, @DeliveryDate,
- @Remarks, @DeliveryTo,                        -- ✅ NEW (Header)
+ @Remarks, @DeliveryTo,
+ @LineSourceId,                        -- ✅ NEW
  @Subtotal, @TaxAmount, @Rounding, @GrandTotal, @NeedsHodApproval,
  @UserId, GETDATE(), 1);";
+
 
             var quotationId = await Connection.QueryFirstAsync<int>(insertHead, new
             {
@@ -147,9 +150,10 @@ VALUES
                 dto.PaymentTermsId,
                 dto.DeliveryDate,
 
-                // ✅ NEW (Header)
                 dto.Remarks,
                 dto.DeliveryTo,
+
+                LineSourceId = (dto.LineSourceId == 2) ? (byte)2 : (byte)1,  // ✅ force 1/2
 
                 dto.Subtotal,
                 dto.TaxAmount,
@@ -158,6 +162,7 @@ VALUES
                 dto.NeedsHodApproval,
                 UserId = userId
             });
+
             const string insertQtSet = @"
 INSERT INTO dbo.QuotationItemSet (QuotationId, ItemSetId, CreatedBy, CreatedDate, IsActive)
 VALUES (@QuotationId, @ItemSetId, @UserId, GETDATE(), 1);";
