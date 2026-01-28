@@ -185,5 +185,22 @@ namespace FinanceApi.Controllers
             ResponseResult data = new ResponseResult(true, "Success", list);
             return Ok(data);
         }
+
+
+        [HttpGet("gettransferdetailsbyid/{id}")]
+        public async Task<IActionResult> gettransferdetailsbyid(int id)
+        {
+            var licenseObj = await _service.gettransferdetailsbyid(id);
+            ResponseResult data = new ResponseResult(true, "Success", licenseObj);
+            return Ok(data);
+        }
+
+        [HttpPost("confirm-receive")]
+        public async Task<IActionResult> ConfirmReceive([FromBody] ConfirmReceiveRequestDto req)
+        {
+            var rows = await _service.ConfirmReceiveAsync(req);
+            return Ok(new { isSuccess = true, message = "Received", data = rows });
+        }
+
     }
 }
