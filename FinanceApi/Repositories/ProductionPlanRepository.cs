@@ -166,7 +166,7 @@ SELECT TOP 1
   p.Status,
   p.CreatedBy,
   p.CreatedDate
-FROM [Finance].[dbo].[ProductionPlan] p
+FROM [dbo].[ProductionPlan] p
 WHERE p.Id = @Id;
 
 -- 2) Lines
