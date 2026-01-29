@@ -27,6 +27,8 @@
         public string Remarks { get; set; }
 
         public List<SalesOrderLines> LineItems { get; set; } = new();
+        public int LineSourceId { get; set; }  // 1 / 2
+        public List<int>? ItemSetIds { get; set; }
     }
 
     //public List<SalesOrderLines> LineItems { get; set; } = new();
