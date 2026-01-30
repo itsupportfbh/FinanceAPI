@@ -848,13 +848,13 @@ OUTER APPLY (
                 iset.SetName AS ItemSetName,
                 qis.CreatedBy,
                 qis.CreatedDate
-            FROM Finance.dbo.QuotationItemSet qis
-            LEFT JOIN Finance.dbo.ItemSet iset ON iset.Id = qis.ItemSetId
+            FROM dbo.QuotationItemSet qis
+            LEFT JOIN dbo.ItemSet iset ON iset.Id = qis.ItemSetId
             WHERE qis.QuotationId = q.Id
               AND ISNULL(qis.IsActive,1)=1
             FOR JSON PATH
         ) AS ItemSetsJson
-    FROM Finance.dbo.QuotationItemSet qis
+    FROM dbo.QuotationItemSet qis
     WHERE qis.QuotationId = q.Id
       AND ISNULL(qis.IsActive,1)=1
 ) isAgg
@@ -921,8 +921,8 @@ SELECT
     qis.CreatedBy,
     qis.CreatedDate,
     qis.IsActive
-FROM Finance.dbo.QuotationItemSet qis
-LEFT JOIN Finance.dbo.ItemSet iset ON iset.Id = qis.ItemSetId
+FROM dbo.QuotationItemSet qis
+LEFT JOIN dbo.ItemSet iset ON iset.Id = qis.ItemSetId
 WHERE qis.QuotationId = @Id
   AND ISNULL(qis.IsActive,1)=1
 ORDER BY qis.Id;";
