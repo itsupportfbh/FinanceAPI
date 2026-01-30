@@ -5,7 +5,15 @@
 public class BatchProductionController : ControllerBase
 {
     private readonly IBatchProductionService _svc;
-    public BatchProductionController(IBatchProductionService svc) => _svc = svc;
+    private readonly IBatchProductionRepository _repo;
+    public BatchProductionController(
+        IBatchProductionService svc,
+        IBatchProductionRepository repo
+    )
+    {
+        _svc = svc ?? throw new ArgumentNullException(nameof(svc));
+        _repo = repo ?? throw new ArgumentNullException(nameof(repo));
+    }
 
     [HttpGet("list")]
     public async Task<IActionResult> List([FromQuery] int top = 200)
@@ -32,4 +40,12 @@ public class BatchProductionController : ControllerBase
     [HttpDelete("{id:int}")]
     public async Task<IActionResult> Delete(int id)
         => Ok(new { isSuccess = true, batchId = await _svc.DeleteAsync(id) });
+
+    [HttpGet("ingredient-explosion")]
+    public async Task<IActionResult> IngredientExplosion([FromQuery] int recipeId, [FromQuery] int warehouseId, [FromQuery] decimal outputQty)
+    {
+        var rows = await _repo.GetIngredientExplosionAsync(recipeId, warehouseId, outputQty);
+        return Ok(new { isSuccess = true, data = rows });
+    }
+
 }

@@ -23,6 +23,9 @@ public class BatchProductionHeaderDto
     public DateTime? UpdatedDate { get; set; }
     public string? PostedBy { get; set; }
     public DateTime? PostedDate { get; set; }
+    public string? ProductionPlanNo { get; set; }
+    public string? Name { get; set; }
+    public DateTime? PlanDate { get; set; }
 }
 
 public class BatchProductionGetByIdDto
@@ -40,6 +43,6 @@ public class BatchProductionSaveRequest
     public int WarehouseId { get; set; }
 
     public string? BatchNo { get; set; }
-    public string User { get; set; } = "";
+    public int UserId { get; set; }
     public List<BatchProductionLineDto> Lines { get; set; } = new();
 }
