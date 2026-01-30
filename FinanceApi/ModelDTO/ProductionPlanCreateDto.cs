@@ -78,6 +78,8 @@
     {
         public int Id { get; set; }
         public int SalesOrderId { get; set; }
+        public int WarehouseId { get; set; }
+        public int OutletId { get; set; }
         public string SalesOrderNo { get; set; } = "";
         public DateTime PlanDate { get; set; }
         public string? Status { get; set; }
