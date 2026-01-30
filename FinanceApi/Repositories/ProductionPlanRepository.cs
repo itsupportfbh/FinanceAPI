@@ -45,11 +45,21 @@ ORDER BY so.Id DESC;
                 new { SalesOrderId = salesOrderId, WarehouseId = warehouseId },
                 commandType: CommandType.StoredProcedure);
 
+            // 1) plan rows
             var plan = (await multi.ReadAsync<PlanRowDto>()).ToList();
+
+            // 2) required list (ignore if you don't need it)
+            await multi.ReadAsync<IngredientRequiredDto>(); // ✅ just consume
+
+            // 3) all warehouse availability (ignore if you don't need it)
+            await multi.ReadAsync<IngredientWarehouseDto>(); // ✅ just consume
+
+            // 4) selected warehouse view (THIS is what your UI expects)
             var ing = (await multi.ReadAsync<IngredientRowDto>()).ToList();
 
             return new ProductionPlanResponseDto { PlanRows = plan, Ingredients = ing };
         }
+
 
         public async Task<int> SavePlanAsync(SavePlanRequest req)
         {

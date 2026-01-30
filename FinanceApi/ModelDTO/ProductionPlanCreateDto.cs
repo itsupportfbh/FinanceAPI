@@ -28,12 +28,31 @@
         public decimal RequiredQty { get; set; }
         public decimal AvailableQty { get; set; }
         public string Status { get; set; } = "OK";
+        public decimal ShortageQty { get; set; }
     }
 
     public class ProductionPlanResponseDto
     {
         public List<PlanRowDto> PlanRows { get; set; } = new();
         public List<IngredientRowDto> Ingredients { get; set; } = new();
+    }
+    public class IngredientRequiredDto
+    {
+        public int ItemId { get; set; }
+        public string ItemName { get; set; } = "";
+        public string? Uom { get; set; }
+        public decimal RequiredQty { get; set; }
+    }
+    public class IngredientWarehouseDto
+    {
+        public int ItemId { get; set; }
+        public string ItemName { get; set; } = "";
+        public decimal RequiredQty { get; set; }
+        public int WarehouseId { get; set; }
+        public string WarehouseName { get; set; } = "";
+        public decimal AvailableQty { get; set; }
+        public decimal ShortageQty { get; set; }
+        public string Status { get; set; } = "";
     }
 
     public class SavePlanRequest
